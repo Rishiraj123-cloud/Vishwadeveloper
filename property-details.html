@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Property Details | VISHWA DEVELOPERS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .detail-wrap { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+    .detail-img-main { width: 100%; height: 420px; object-fit: cover; border-radius: 24px; background: #dbe4ee; }
+    .detail-thumbs { display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap; }
+    .detail-thumbs img { width: 90px; height: 70px; object-fit: cover; border-radius: 10px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
+    .detail-thumbs img:hover, .detail-thumbs img.active { opacity: 1; outline: 2px solid #a67c4e; }
+    .detail-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+    .detail-header h1 { font-family: 'Fraunces', serif; font-size: 2.2rem; }
+    .detail-price { font-size: 1.8rem; font-weight: 700; color: #0b1a2f; }
+    .detail-loc { color: #5b6f82; margin-top: 0.4rem; }
+    .detail-meta { display: flex; gap: 2rem; margin: 1.5rem 0; padding: 1.2rem 0; border-top: 1px solid #eef2f6; border-bottom: 1px solid #eef2f6; }
+    .detail-meta span { color: #2d4055; font-size: 1.05rem; }
+    .detail-desc { margin-top: 1.5rem; line-height: 1.7; color: #2d4055; }
+    .detail-badge { display: inline-block; background: #a67c4e; color: white; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    
+    /* Lightbox Styles */
+    .lightbox { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(11,26,47,0.95); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+    .lightbox-content { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); object-fit: contain; }
+    .lightbox-close { position: absolute; top: 30px; right: 40px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+    .lightbox-close:hover { color: #a67c4e; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">VISHWA<span>DEVELOPERS</span></div>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="listings.html" class="active"><i class="fas fa-building"></i> Listings</a></li>
+        <li><a href="agents.html"><i class="fas fa-user-tie"></i> Agents</a></li>
+        <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li><a href="login.html" class="nav-cta">Login</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </header>
+
+  <div class="detail-wrap" id="detailWrap">
+    <p style="text-align:center;color:#5b6f82;">Loading property...</p>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="imageLightbox" class="lightbox" onclick="this.style.display='none'">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-content" id="lightboxImg">
+  </div>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html">Listings</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Vishwa Developers. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+
+    async function loadProperty() {
+      const wrap = document.getElementById('detailWrap');
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      if (!id) {
+        wrap.innerHTML = '<p style="text-align:center;color:#c0392b;">No property specified.</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/properties/' + id);
+        if (!res.ok) {
+          wrap.innerHTML = '<p style="text-align:center;color:#c0392b;">Property not found.</p>';
+          return;
+        }
+        const data = await res.json();
+        const p = data.property || data;
+
+        let imgs = [];
+        if (Array.isArray(p.images)) {
+          imgs = p.images;
+        } else {
+          try { imgs = JSON.parse(p.images || '[]'); } catch (e) { imgs = []; }
+        }
+
+        const mainImg = imgs[0] || '';
+
+        wrap.innerHTML = `
+          <img class="detail-img-main" id="mainImg" src="${mainImg}" alt="${p.title}" style="cursor:zoom-in;" onclick="document.getElementById('imageLightbox').style.display='flex'; document.getElementById('lightboxImg').src=this.src;" onerror="this.style.background='#dbe4ee';this.src='';" />
+          ${imgs.length > 1 ? `
+          <div class="detail-thumbs">
+            ${imgs.map((img, i) => `<img src="${img}" class="${i === 0 ? 'active' : ''}" onclick="document.getElementById('mainImg').src='${img}';document.querySelectorAll('.detail-thumbs img').forEach(t=>t.classList.remove('active'));this.classList.add('active');" />`).join('')}
+          </div>` : ''}
+
+          <div class="detail-header">
+            <div>
+              <span class="detail-badge">${p.purpose === 'sale' ? 'For Sale' : 'For Rent'}</span>
+              <h1>${p.title}</h1>
+              <p class="detail-loc"><i class="fas fa-location-dot"></i> ${p.location}</p>
+            </div>
+            <div class="detail-price">${p.price}</div>
+          </div>
+
+          <div class="detail-meta">
+            ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
+            ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
+            ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
+            ${p.property_type ? `<span><i class="fas fa-building"></i> ${p.property_type}</span>` : ''}
+          </div>
+
+          <div class="contact-form-card" style="margin-top:2rem;">
+            <h3 style="font-family:'Fraunces',serif;margin-bottom:0.3rem;">EMI Calculator</h3>
+            <p style="color:#5b6f82;font-size:0.9rem;margin-bottom:1.2rem;">Estimate your monthly home loan payment for this property.</p>
+            <div class="form-row-2">
+              <div>
+                <label for="emiLoanAmount">Loan Amount (₹)</label>
+                <input type="number" id="emiLoanAmount" min="0" step="1000" />
+              </div>
+              <div>
+                <label for="emiDownPct">Down Payment (%)</label>
+                <input type="number" id="emiDownPct" min="0" max="90" value="20" />
+              </div>
+            </div>
+            <div class="form-row-2">
+              <div>
+                <label for="emiRate">Interest Rate (% p.a.)</label>
+                <input type="number" id="emiRate" min="1" max="20" step="0.1" value="8.5" />
+              </div>
+              <div>
+                <label for="emiTenure">Tenure (years)</label>
+                <input type="number" id="emiTenure" min="1" max="30" value="20" />
+              </div>
+            </div>
+            <div style="background:#f8fafc;border-radius:16px;padding:1.2rem 1.4rem;margin-top:0.5rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="color:#5b6f82;font-size:0.9rem;">Estimated Monthly EMI</span>
+                <span id="emiResult" style="font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700;color:#0b1a2f;">₹0</span>
+              </div>
+              <div id="emiBreakdown" style="color:#5b6f82;font-size:0.8rem;margin-top:0.5rem;"></div>
+            </div>
+            <p style="color:#b6c2ce;font-size:0.75rem;margin-top:0.8rem;margin-bottom:0;">This is an estimate only. Actual loan terms depend on your lender and eligibility.</p>
+          </div>
+
+          <div class="detail-desc">
+            <h3 style="font-family:'Fraunces',serif;margin-bottom:0.5rem;">Description</h3>
+            <p>${p.description || 'No description provided.'}</p>
+          </div>
+
+          ${p.owner ? `
+          <div class="contact-form-card" style="margin-top:2rem;">
+            <h3 style="font-family:'Fraunces',serif;margin-bottom:0.3rem;">Contact ${p.owner.business_name || p.owner.full_name}</h3>
+            <p style="color:#5b6f82;font-size:0.9rem;margin-bottom:1.2rem;">Listed by ${p.owner.full_name}. Send a message and they'll get back to you directly.</p>
+            <form id="ownerContactForm">
+              <div class="form-row-2">
+                <div>
+                  <label for="ownerContactName">Your Name</label>
+                  <input type="text" id="ownerContactName" required />
+                </div>
+                <div>
+                  <label for="ownerContactPhone">Your Phone</label>
+                  <input type="text" id="ownerContactPhone" />
+                </div>
+              </div>
+              <label for="ownerContactEmail">Your Email</label>
+              <input type="email" id="ownerContactEmail" required />
+              <label for="ownerContactMessage">Message</label>
+              <textarea id="ownerContactMessage" required>Hi, I'm interested in "${p.title}". Is it still available?</textarea>
+              <button type="submit" class="btn-primary" style="width:100%;">Send Message</button>
+              <p id="ownerContactStatus" style="margin-top:0.8rem;font-size:0.85rem;"></p>
+            </form>
+          </div>
+          ` : ''}
+
+          <a href="listings.html" class="btn-outline-dark" style="margin-top:2rem;display:inline-block;">
+            <i class="fas fa-arrow-left"></i> Back to Listings
+          </a>
+        `;
+
+        // Parse Indian-style price text into a numeric rupee amount
+        function parsePriceToNumber(priceStr) {
+          if (!priceStr) return null;
+          let s = String(priceStr).trim().toLowerCase();
+          s = s.replace(/₹|rs\.?|inr/g, '').trim();
+
+          const croreMatch = s.match(/([\d,.]+)\s*(cr|crore)/);
+          if (croreMatch) {
+            const num = parseFloat(croreMatch[1].replace(/,/g, ''));
+            if (!isNaN(num)) return Math.round(num * 1e7);
+          }
+          const lakhMatch = s.match(/([\d,.]+)\s*(l|lac|lakh)/);
+          if (lakhMatch) {
+            const num = parseFloat(lakhMatch[1].replace(/,/g, ''));
+            if (!isNaN(num)) return Math.round(num * 1e5);
+          }
+          const plain = s.replace(/[^0-9.]/g, '');
+          if (plain) {
+            const num = parseFloat(plain);
+            if (!isNaN(num) && num > 1000) return Math.round(num);
+          }
+          return null;
+        }
+
+        function formatINR(num) {
+          return '₹' + Math.round(num).toLocaleString('en-IN');
+        }
+
+        function calculateEMI() {
+          const loanAmountInput = parseFloat(document.getElementById('emiLoanAmount').value) || 0;
+          const downPct = parseFloat(document.getElementById('emiDownPct').value) || 0;
+          const rate = parseFloat(document.getElementById('emiRate').value) || 0;
+          const years = parseFloat(document.getElementById('emiTenure').value) || 0;
+
+          const principal = loanAmountInput * (1 - downPct / 100);
+          const monthlyRate = rate / 12 / 100;
+          const months = years * 12;
+
+          const resultEl = document.getElementById('emiResult');
+          const breakdownEl = document.getElementById('emiBreakdown');
+
+          if (principal <= 0 || monthlyRate <= 0 || months <= 0) {
+            resultEl.textContent = '₹0';
+            breakdownEl.textContent = '';
+            return;
+          }
+
+          const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+          const totalPayment = emi * months;
+          const totalInterest = totalPayment - principal;
+
+          resultEl.textContent = formatINR(emi);
+          breakdownEl.textContent = `Loan: ${formatINR(principal)} • Total Interest: ${formatINR(totalInterest)} • Total Payment: ${formatINR(totalPayment)}`;
+        }
+
+        const parsedPrice = parsePriceToNumber(p.price);
+        if (parsedPrice) {
+          document.getElementById('emiLoanAmount').value = parsedPrice;
+        }
+        ['emiLoanAmount', 'emiDownPct', 'emiRate', 'emiTenure'].forEach(id => {
+          document.getElementById(id).addEventListener('input', calculateEMI);
+        });
+        calculateEMI();
+
+        const ownerForm = document.getElementById('ownerContactForm');
+        if (ownerForm) {
+          ownerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('ownerContactStatus');
+            const payload = {
+              name: document.getElementById('ownerContactName').value.trim(),
+              email: document.getElementById('ownerContactEmail').value.trim(),
+              phone: document.getElementById('ownerContactPhone').value.trim(),
+              message: document.getElementById('ownerContactMessage').value.trim(),
+              propertyId: p.id,
+              ownerId: p.owner.id
+            };
+            status.style.color = '#5b6f82';
+            status.textContent = 'Sending...';
+            try {
+              const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+              if (!res.ok) throw new Error('Request failed');
+              status.style.color = '#2e7d32';
+              status.textContent = 'Message sent! The owner will contact you soon.';
+              ownerForm.reset();
+            } catch (err) {
+              status.style.color = '#c0392b';
+              status.textContent = 'Something went wrong. Please try again.';
+            }
+          });
+        }
+        // Inject Schema.org structured data for SEO rich results
+        try {
+          const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "RealEstateListing",
+            "name": p.title,
+            "description": p.description || `${p.title} located in ${p.location}`,
+            "url": window.location.href,
+            "datePosted": p.created_at || undefined,
+            "image": imgs.length ? imgs.map(i => window.location.origin + i) : undefined,
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": p.location,
+              "addressCountry": "IN"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": (parsePriceForSchema(p.price) || undefined),
+              "priceCurrency": "INR",
+              "availability": "https://schema.org/InStock",
+              "businessFunction": p.purpose === 'rent' ? "https://schema.org/LeaseOut" : "https://schema.org/Sell"
+            },
+            "numberOfRooms": p.beds || undefined,
+            "floorSize": p.sqft ? { "@type": "QuantitativeValue", "value": p.sqft, "unitCode": "FTK" } : undefined
+          };
+          Object.keys(schemaData).forEach(k => schemaData[k] === undefined && delete schemaData[k]);
+          if (schemaData.offers) {
+            Object.keys(schemaData.offers).forEach(k => schemaData.offers[k] === undefined && delete schemaData.offers[k]);
+          }
+          const schemaScript = document.createElement('script');
+          schemaScript.type = 'application/ld+json';
+          schemaScript.textContent = JSON.stringify(schemaData);
+          document.head.appendChild(schemaScript);
+        } catch (schemaErr) {
+          console.error('Failed to inject schema markup:', schemaErr);
+        }
+      } catch (err) {
+        console.error('Failed to load property:', err);
+        wrap.innerHTML = '<p style="text-align:center;color:#c0392b;">Something went wrong loading this property.</p>';
+      }
+    }
+
+    // Reuse the same Indian-price parser for schema (plain number, no formatting)
+    function parsePriceForSchema(priceStr) {
+      if (!priceStr) return null;
+      let s = String(priceStr).trim().toLowerCase().replace(/₹|rs\.?|inr/g, '').trim();
+      const croreMatch = s.match(/([\d,.]+)\s*(cr|crore)/);
+      if (croreMatch) {
+        const num = parseFloat(croreMatch[1].replace(/,/g, ''));
+        if (!isNaN(num)) return Math.round(num * 1e7);
+      }
+      const lakhMatch = s.match(/([\d,.]+)\s*(l|lac|lakh)/);
+      if (lakhMatch) {
+        const num = parseFloat(lakhMatch[1].replace(/,/g, ''));
+        if (!isNaN(num)) return Math.round(num * 1e5);
+      }
+      const plain = s.replace(/[^0-9.]/g, '');
+      if (plain) {
+        const num = parseFloat(plain);
+        if (!isNaN(num) && num > 1000) return Math.round(num);
+      }
+      return null;
+    }
+
+    loadProperty();
+  </script>
+</body>
+</html>

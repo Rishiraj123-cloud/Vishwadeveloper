@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agents | VISHWA DEVELOPERS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">VISHWA<span>DEVELOPERS</span></div>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="listings.html"><i class="fas fa-building"></i> Listings</a></li>
+        <li><a href="agents.html" class="active"><i class="fas fa-user-tie"></i> Agents</a></li>
+        <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li><a href="login.html" class="nav-cta">Login</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </header>
+
+  <section class="section-pad">
+    <div class="section-head reveal">
+      <span class="section-badge">Our Team</span>
+      <h2>Meet Our Agents</h2>
+      <p>Experienced, verified professionals ready to help you buy, sell, or rent.</p>
+    </div>
+    <div class="grid-4 reveal-stagger">
+      <div class="agent-card">
+        <div class="agent-photo">RA</div>
+        <h3>Rahul Anand</h3>
+        <p class="agent-role">Senior Agent</p>
+        <div class="agent-contact"><a href="#"><i class="fas fa-phone"></i></a><a href="#"><i class="fas fa-envelope"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-photo">SK</div>
+        <h3>Sneha Kulkarni</h3>
+        <p class="agent-role">Residential Specialist</p>
+        <div class="agent-contact"><a href="#"><i class="fas fa-phone"></i></a><a href="#"><i class="fas fa-envelope"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-photo">MV</div>
+        <h3>Manoj Verma</h3>
+        <p class="agent-role">Commercial Properties</p>
+        <div class="agent-contact"><a href="#"><i class="fas fa-phone"></i></a><a href="#"><i class="fas fa-envelope"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-photo">PR</div>
+        <h3>Priya Rao</h3>
+        <p class="agent-role">Luxury Homes</p>
+        <div class="agent-contact"><a href="#"><i class="fas fa-phone"></i></a><a href="#"><i class="fas fa-envelope"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html">Listings</a>
+      <a href="agents.html">Agents</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Vishwa Developers. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>

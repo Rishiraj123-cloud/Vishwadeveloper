@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VISHWA DEVELOPERS | Premium Real Estate</title>
+  
+  <meta name="description" content="Vishwa Developers offers premium real estate listings including luxury villas, modern apartments, and premium plots. Find your dream home today." />
+  <meta property="og:title" content="VISHWA DEVELOPERS | Premium Real Estate" />
+  <meta property="og:description" content="Discover exclusive real estate listings tailored for you." />
+  <meta property="og:image" content="https://vishwadevelopers.com/homeimg.png" />
+  <meta property="og:url" content="https://vishwadevelopers.com/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="VISHWA DEVELOPERS | Premium Real Estate" />
+  <meta name="twitter:description" content="Discover luxury villas, apartments, and plots in prime locations. Your dream home awaits with Vishwa Developers." />
+  <meta name="twitter:image" content="https://vishwadevelopers.com/homeimg.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">VISHWA<span>DEVELOPERS</span></div>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="listings.html"><i class="fas fa-building"></i> Listings</a></li>
+        <li><a href="agents.html"><i class="fas fa-user-tie"></i> Agents</a></li>
+        <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li><a href="owner-dashboard.html" class="nav-cta" style="background:#a67c4e;color:white;border-color:#a67c4e;"><i class="fas fa-plus"></i> Post Property</a></li>
+        <li><a href="login.html" class="nav-cta">Login</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </header>
+
+  <section class="hero" id="heroSection" style="background-image: url('homeimg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div class="hero-video-overlay" style="background: rgba(11,26,47,0.6); position: absolute; inset: 0; z-index: 1;"></div>
+    
+    <div class="hero-content-group" style="position: relative; z-index: 2; text-align: center;">
+      <h1 class="hero-content" id="heroHeading"></h1>
+      <p class="hero-content">Browse verified properties from trusted owners and agents across the city — all in one place.</p>
+      <div class="hero-actions hero-content">
+        <a href="listings.html" class="btn-primary"><i class="fas fa-search"></i> Browse Listings</a>
+        <a href="list-with-us.html" class="btn-outline"><i class="fas fa-user-tie"></i> List Your Property</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="spotlight">
+    <div class="spotlight-blob blob-1"></div>
+    <div class="spotlight-blob blob-2"></div>
+    <div class="spotlight-blob blob-3"></div>
+
+    <div class="spotlight-inner">
+      <div class="spotlight-text reveal">
+        <span class="spotlight-tag">Just Listed</span>
+        <h2>Step Into<br>Your Next Home</h2>
+        <p>A hand-picked spotlight from our newest verified listings — updated in real time.</p>
+        <a href="listings.html" class="btn-primary" style="background:#0b1a2f;">
+          <i class="fas fa-arrow-right"></i> Explore All Listings
+        </a>
+      </div>
+
+      <div class="spotlight-card-wrap reveal">
+        <div class="spotlight-card" id="spotlightCard">
+          <div class="spotlight-card-img" id="spotlightImg"></div>
+          <div class="spotlight-card-body">
+            <span class="spotlight-badge" id="spotlightBadge">For Sale</span>
+            <h3 id="spotlightTitle">Loading...</h3>
+            <p class="spotlight-loc" id="spotlightLoc"><i class="fas fa-location-dot"></i></p>
+            <div class="spotlight-price" id="spotlightPrice"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="section-head reveal">
+      <span class="section-badge"><i class="fas fa-map-pin"></i> Featured</span>
+      <h2>Popular Properties</h2>
+      <p>A few of our most-viewed listings this week.</p>
+    </div>
+    <div class="grid-3" id="tiltGrid" style="perspective: 1200px;">
+      <div class="listing-card tilt-card">
+        <div class="listing-img"><span class="listing-badge">For Sale</span></div>
+        <div class="listing-body">
+          <h3>Sunrise Villa</h3>
+          <p class="listing-loc"><i class="fas fa-location-dot"></i>Whitefield, Bengaluru</p>
+          <div class="listing-meta"><span><i class="fas fa-bed"></i> 3 Beds</span><span><i class="fas fa-bath"></i> 2 Baths</span><span><i class="fas fa-ruler-combined"></i> 1800 sqft</span></div>
+          <div class="listing-price">₹1.2 Cr</div>
+        </div>
+      </div>
+      <div class="listing-card tilt-card">
+        <div class="listing-img"><span class="listing-badge">For Rent</span></div>
+        <div class="listing-body">
+          <h3>Palm Residency</h3>
+          <p class="listing-loc"><i class="fas fa-location-dot"></i>Indiranagar, Bengaluru</p>
+          <div class="listing-meta"><span><i class="fas fa-bed"></i> 2 Beds</span><span><i class="fas fa-bath"></i> 2 Baths</span><span><i class="fas fa-ruler-combined"></i> 1200 sqft</span></div>
+          <div class="listing-price">₹38,000/mo</div>
+        </div>
+      </div>
+      <div class="listing-card tilt-card">
+        <div class="listing-img"><span class="listing-badge">For Sale</span></div>
+        <div class="listing-body">
+          <h3>Green Meadows</h3>
+          <p class="listing-loc"><i class="fas fa-location-dot"></i>Sarjapur Road, Bengaluru</p>
+          <div class="listing-meta"><span><i class="fas fa-bed"></i> 4 Beds</span><span><i class="fas fa-bath"></i> 3 Baths</span><span><i class="fas fa-ruler-combined"></i> 2400 sqft</span></div>
+          <div class="listing-price">₹1.8 Cr</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="stats-grid reveal-stagger">
+      <div class="stat-item"><h3 data-count="500" data-suffix="+">0</h3><p>Properties Listed</p></div>
+      <div class="stat-item"><h3 data-count="120" data-suffix="+">0</h3><p>Verified Agents</p></div>
+      <div class="stat-item"><h3 data-count="15" data-suffix="+">0</h3><p>Cities Covered</p></div>
+      <div class="stat-item"><h3 data-count="10" data-suffix="k+">0</h3><p>Happy Customers</p></div>
+    </div>
+  </section>
+
+  <section class="section-pad" style="padding-top: 0;">
+    <div class="trust-strip reveal">
+      <span><i class="fas fa-shield-halved"></i> Verified Listings</span>
+      <span><i class="fas fa-award"></i> RERA Compliant</span>
+      <span><i class="fas fa-handshake"></i> 120+ Trusted Agents</span>
+      <span><i class="fas fa-star"></i> 4.8/5 Owner Rating</span>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="section-head reveal">
+      <span class="section-badge">Testimonials</span>
+      <h2>What Our Owners Say</h2>
+      <p>Real feedback from property owners who listed with us.</p>
+    </div>
+    <div class="grid-3 reveal-stagger">
+      <div class="testimonial-card">
+        <i class="fas fa-quote-right testimonial-quote-icon"></i>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Listed my apartment on a Monday and had two serious buyers by the weekend. The verification process actually filters out time-wasters."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AK</div>
+          <div><h4>Anil Kumar</h4><p>Property Owner, Indiranagar</p></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <i class="fas fa-quote-right testimonial-quote-icon"></i>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"The dashboard makes it simple to manage multiple listings, and their agent network brought in buyers I wouldn't have reached on my own."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div><h4>Meera Reddy</h4><p>Owner, 3 Properties Listed</p></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <i class="fas fa-quote-right testimonial-quote-icon"></i>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Rented out my flat within 10 days. What stood out was how professional the whole process felt, from listing to closing."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SP</div>
+          <div><h4>Suresh Pillai</h4><p>Owner, HSR Layout</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html">Listings</a>
+      <a href="agents.html">Agents</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Vishwa Developers. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    // Removed scroll animation as requested
+    async function loadSpotlight() {
+      try {
+        const res = await fetch('/api/properties');
+        const data = await res.json();
+        const properties = data.properties || [];
+        if (properties.length === 0) return;
+
+        const p = properties[0]; // newest listing (already ordered by created_at DESC)
+
+        let imgs = [];
+        if (Array.isArray(p.images)) {
+          imgs = p.images;
+        } else {
+          try { imgs = JSON.parse(p.images || '[]'); } catch (e) { imgs = []; }
+        }
+        const firstImg = imgs[0];
+
+        document.getElementById('spotlightTitle').textContent = p.title;
+        document.getElementById('spotlightLoc').innerHTML = '<i class="fas fa-location-dot"></i> ' + p.location;
+        document.getElementById('spotlightPrice').textContent = p.price;
+        document.getElementById('spotlightBadge').textContent = p.purpose === 'sale' ? 'For Sale' : 'For Rent';
+
+        if (firstImg) {
+          document.getElementById('spotlightImg').style.backgroundImage = `url('${firstImg}')`;
+        }
+
+        document.getElementById('spotlightCard').onclick = () => {
+          window.location.href = 'property-details.html?id=' + p.id;
+        };
+        document.getElementById('spotlightCard').style.cursor = 'pointer';
+      } catch (err) {
+        console.error('Failed to load spotlight property:', err);
+      }
+    }
+    loadSpotlight();
+
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- Word-by-word hero heading ----
+    const heading = document.getElementById('heroHeading');
+    const text = "Find a place your family will love to call home";
+    heading.innerHTML = text.split(' ').map((word, i) =>
+      `<span class="word-reveal"><span style="animation-delay:${0.05 * i}s">${word}</span></span>`
+    ).join(' ');
+
+    if (!reduceMotion) {
+      // Clean up previous 3D scene code that applied to #sceneInner since it's removed.
+      window.addEventListener('scroll', () => {
+        const heroSection = document.getElementById('heroSection');
+        const rect = heroSection.getBoundingClientRect();
+        const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+        heroSection.style.opacity = 1 - progress * 0.9; // subtle fade out for entire hero at the very end
+      }, { passive: true });
+    }
+
+    // ---- Scroll-reveal for headings/stats (IntersectionObserver only) ----
+    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // ---- Simple fade-up reveal for property cards (no tilt, no jitter) ----
+    const tiltCards = document.querySelectorAll('.tilt-card');
+    const cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          cardObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    tiltCards.forEach(card => cardObserver.observe(card));
+
+    // ---- Animated counting numbers ----
+    function animateCount(el) {
+      const target = parseInt(el.dataset.count, 10);
+      const suffix = el.dataset.suffix || '';
+      const duration = 1400;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target) + suffix;
+        if (progress < 1) { requestAnimationFrame(tick); }
+        else { el.classList.add('counted'); }
+      }
+      requestAnimationFrame(tick);
+    }
+    const counters = document.querySelectorAll('[data-count]');
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          countObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(el => countObserver.observe(el));
+  </script>
+</body>
+</html>

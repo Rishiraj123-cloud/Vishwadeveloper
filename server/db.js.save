@@ -1,0 +1,125 @@
+CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    property_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, property_id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(property_id) REFERENCES properties(id)
+  );
+`);CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    property_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, property_id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(property_id) REFERENCES properties(id)
+  );
+  CREATE TABLE IF NOT EXISTS saved_searches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    property_type TEXT,
+    purpose TEXT,
+    location TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_notified_at DATETIME,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  );
+`);ø
+const Database = require('better-sqlite3');
+const path = require('path');
+
+const db = new Database(path.join(__dirname, 'vishwa.db'));
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL CHECK(role IN ('user','owner')),
+    business_name TEXT,
+    properties_range TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(email, role)
+  );
+  CREATE TABLE IF NOT EXISTS properties (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    owner_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    location TEXT NOT NULL,
+    property_type TEXT,
+    purpose TEXT CHECK(purpose IN ('sale','rent')),
+    price TEXT,
+    beds INTEGER,
+    baths INTEGER,
+    sqft INTEGER,
+    description TEXT,
+    images TEXT,
+    lat REAL,
+    lng REAL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(owner_id) REFERENCES users(id)
+  );
+  CREATE TABLE IF NOT EXISTS contact_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    phone TEXT,
+    email TEXT NOT NULL,
+    message TEXT NOT NULL,
+    property_id INTEGER,
+    owner_id INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(property_id) REFERENCES properties(id),
+    FOREIGN KEY(owner_id) REFERENCES users(id)
+  );
+  CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    property_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, property_id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(property_id) REFERENCES properties(id)
+  );
+`);
+
+// Migration: add images column if the table already existed without it
+try {
+  db.exec("ALTER TABLE properties ADD COLUMN images TEXT;");
+  console.log("Migration: added images column");
+} catch (e) {
+  // column already exists, ignore
+}
+
+// Migration: add property_id / owner_id to contact_messages if missing
+try {
+  db.exec("ALTER TABLE contact_messages ADD COLUMN property_id INTEGER;");
+  console.log("Migration: added property_id column to contact_messages");
+} catch (e) {
+  // column already exists, ignore
+}
+try {
+  db.exec("ALTER TABLE contact_messages ADD COLUMN owner_id INTEGER;");
+  console.log("Migration: added owner_id column to contact_messages");
+} catch (e) {
+  // column already exists, ignore
+}
+
+// Migration: add lat/lng to properties if missing
+try {
+  db.exec("ALTER TABLE properties ADD COLUMN lat REAL;");
+  console.log("Migration: added lat column to properties");
+} catch (e) {
+  // column already exists, ignore
+}
+try {
+  db.exec("ALTER TABLE properties ADD COLUMN lng REAL;");
+  console.log("Migration: added lng column to properties");
+} catch (e) {
+  // column already exists, ignore
+}
+
+module.exports = db;

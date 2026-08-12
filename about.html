@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us | VISHWA DEVELOPERS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">VISHWA<span>DEVELOPERS</span></div>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="listings.html"><i class="fas fa-building"></i> Listings</a></li>
+        <li><a href="agents.html"><i class="fas fa-user-tie"></i> Agents</a></li>
+        <li><a href="about.html" class="active"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li><a href="login.html" class="nav-cta">Login</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </header>
+
+  <section class="about-hero">
+    <h1>Building trust, one home at a time</h1>
+    <p>Vishwa Developers connects buyers, renters, and owners through a transparent, verified real estate platform.</p>
+  </section>
+
+  <section class="section-pad">
+    <div class="about-split reveal">
+      <div class="img-block"></div>
+      <div>
+        <h2>Our Story</h2>
+        <p>Founded with a simple goal: make property search honest and stress-free. We verify every listing and every owner before it goes live.</p>
+        <p>Today, we work with hundreds of agents and thousands of families across the region to find the right home, at the right price.</p>
+        <a href="contact.html" class="btn-primary"><i class="fas fa-envelope"></i> Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="stats-grid reveal-stagger">
+      <div class="stat-item"><h3 data-count="500" data-suffix="+">0</h3><p>Properties Listed</p></div>
+      <div class="stat-item"><h3 data-count="120" data-suffix="+">0</h3><p>Verified Agents</p></div>
+      <div class="stat-item"><h3 data-count="15" data-suffix="+">0</h3><p>Cities Covered</p></div>
+      <div class="stat-item"><h3 data-count="10" data-suffix="k+">0</h3><p>Happy Customers</p></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html">Listings</a>
+      <a href="agents.html">Agents</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Vishwa Developers. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    function animateCount(el) {
+      const target = parseInt(el.dataset.count, 10);
+      const suffix = el.dataset.suffix || '';
+      const duration = 1400;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target) + suffix;
+        if (progress < 1) { requestAnimationFrame(tick); }
+        else { el.classList.add('counted'); }
+      }
+      requestAnimationFrame(tick);
+    }
+    const counters = document.querySelectorAll('[data-count]');
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          countObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(el => countObserver.observe(el));
+  </script>
+</body>
+</html>

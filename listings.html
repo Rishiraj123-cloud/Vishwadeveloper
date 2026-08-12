@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listings | VISHWA DEVELOPERS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #mapView { display: none; height: 520px; border-radius: 16px; margin-bottom: 2.5rem; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+    #mapView.active { display: block; }
+    .view-toggle { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .view-toggle button { background: white; border: 1px solid #e2e8f0; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 600; font-size: 0.88rem; cursor: pointer; color: #5b6f82; transition: all 0.2s; }
+    .view-toggle button.active { background: #0b1a2f; color: white; border-color: #0b1a2f; }
+    .leaflet-popup-content h4 { font-family: 'Fraunces', serif; margin: 0 0 0.3rem; font-size: 1rem; }
+    .leaflet-popup-content p { margin: 0.1rem 0; font-size: 0.85rem; color: #5b6f82; }
+    .leaflet-popup-content a { color: #a67c4e; font-weight: 600; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">VISHWA<span>DEVELOPERS</span></div>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="listings.html" class="active"><i class="fas fa-building"></i> Listings</a></li>
+        <li><a href="agents.html"><i class="fas fa-user-tie"></i> Agents</a></li>
+        <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+        <li><a href="owner-dashboard.html" class="nav-cta" style="background:#a67c4e;color:white;border-color:#a67c4e;"><i class="fas fa-plus"></i> Post Property</a></li>
+        <li><a href="login.html" class="nav-cta">Login</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </header>
+
+  <section class="section-pad">
+    <div class="section-head reveal">
+      <span class="section-badge">Properties</span>
+      <h2>All Listings</h2>
+      <p>Filter by type, location, or budget to find the right fit.</p>
+    </div>
+
+    <div class="filter-bar reveal" style="display:flex; flex-wrap:wrap; gap:10px;">
+      <select id="filterType">
+        <option value="">Property Type</option>
+        <option value="Villa">Villa</option>
+        <option value="Apartment">Apartment</option>
+        <option value="Plot">Plot</option>
+      </select>
+      <select id="filterPurpose">
+        <option value="">Purpose</option>
+        <option value="sale">Buy</option>
+        <option value="rent">Rent</option>
+      </select>
+      <select id="filterBeds">
+        <option value="">Any Beds</option>
+        <option value="1">1+ Beds</option>
+        <option value="2">2+ Beds</option>
+        <option value="3">3+ Beds</option>
+        <option value="4">4+ Beds</option>
+      </select>
+      <input type="number" id="filterMinPrice" placeholder="Min Price (₹)" style="max-width:140px;" />
+      <input type="number" id="filterMaxPrice" placeholder="Max Price (₹)" style="max-width:140px;" />
+      <input type="text" id="filterLocation" placeholder="Location" />
+      <button class="btn-outline-dark" id="filterBtn"><i class="fas fa-filter"></i> Filter</button>
+      <button class="btn-outline-dark" id="saveSearchBtn"><i class="fas fa-bell"></i> Save</button>
+    </div>
+
+    <div class="view-toggle">
+      <button id="gridViewBtn" class="active"><i class="fas fa-th-large"></i> Grid</button>
+      <button id="mapViewBtn"><i class="fas fa-map-location-dot"></i> Map</button>
+    </div>
+
+    <div id="mapView"></div>
+
+    <div class="grid-3 reveal-stagger" id="listingsGrid">
+      <p style="grid-column:1/-1;text-align:center;color:#5b6f82;">Loading properties...</p>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    let leafletMap = null;
+    let mapMarkers = [];
+    let lastLoadedProperties = [];
+
+    function initMap() {
+      if (leafletMap) return;
+      leafletMap = L.map('mapView').setView([12.9716, 77.5946], 11); // Default: Bangalore
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(leafletMap);
+    }
+
+    function renderMapMarkers(properties) {
+      if (!leafletMap) return;
+      mapMarkers.forEach(m => leafletMap.removeLayer(m));
+      mapMarkers = [];
+
+      const withCoords = properties.filter(p => p.lat && p.lng);
+      withCoords.forEach(p => {
+        const marker = L.marker([p.lat, p.lng]).addTo(leafletMap);
+        marker.bindPopup(`
+          <h4>${p.title}</h4>
+          <p>${p.location}</p>
+          <p><strong>${p.price}</strong></p>
+          <a href="property-details.html?id=${p.id}">View Details &rarr;</a>
+        `);
+        mapMarkers.push(marker);
+      });
+
+      if (withCoords.length > 0) {
+        const group = L.featureGroup(mapMarkers);
+        leafletMap.fitBounds(group.getBounds().pad(0.2));
+      }
+    }
+
+    document.getElementById('gridViewBtn').addEventListener('click', () => {
+      document.getElementById('gridViewBtn').classList.add('active');
+      document.getElementById('mapViewBtn').classList.remove('active');
+      document.getElementById('mapView').classList.remove('active');
+      document.getElementById('listingsGrid').style.display = '';
+    });
+
+    document.getElementById('mapViewBtn').addEventListener('click', () => {
+      document.getElementById('mapViewBtn').classList.add('active');
+      document.getElementById('gridViewBtn').classList.remove('active');
+      document.getElementById('mapView').classList.add('active');
+      document.getElementById('listingsGrid').style.display = 'none';
+      initMap();
+      setTimeout(() => {
+        leafletMap.invalidateSize();
+        renderMapMarkers(lastLoadedProperties);
+      }, 50);
+    });
+
+    async function loadListings(params) {
+      const grid = document.getElementById('listingsGrid');
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#5b6f82;">Loading properties...</p>';
+      try {
+        const query = params ? '?' + params.toString() : '';
+        const res = await fetch('/api/properties' + query);
+        const data = await res.json();
+        const properties = data.properties || data || [];
+        lastLoadedProperties = properties;
+
+        if (properties.length === 0) {
+          grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#5b6f82;">No properties listed yet.</p>';
+          return;
+        }
+
+        let currentUser = null;
+        try {
+          const uStr = localStorage.getItem('user');
+          if (uStr) currentUser = JSON.parse(uStr);
+        } catch(e) {}
+
+        grid.innerHTML = properties.map(p => {
+          let imgs = [];
+          if (Array.isArray(p.images)) {
+            imgs = p.images;
+          } else {
+            try { imgs = JSON.parse(p.images || '[]'); } catch (e) { imgs = []; }
+          }
+          const firstImg = imgs[0];
+          
+          let deleteHtml = '';
+          if (currentUser && (currentUser.is_admin || currentUser.id === p.owner_id)) {
+            deleteHtml = `<button onclick="deleteGlobalProperty(event, ${p.id}, ${currentUser.is_admin ? 'true' : 'false'})" style="position:absolute;bottom:12px;right:12px;z-index:5;background:white;color:#c0392b;border:1px solid #fdeeee;width:38px;height:38px;border-radius:50%;box-shadow:0 4px 10px rgba(0,0,0,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='#fdeeee'" onmouseout="this.style.background='white'" title="Delete Property"><i class="fas fa-trash"></i></button>`;
+          }
+          
+          return `
+          <div class="listing-card" style="position:relative;">
+            ${deleteHtml}
+            <button class="save-btn" onclick="toggleFavorite(event, ${p.id}, this)" style="position:absolute;top:12px;right:12px;z-index:5;background:white;border:none;width:38px;height:38px;border-radius:50%;box-shadow:0 4px 10px rgba(0,0,0,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <i class="fa-regular fa-heart" style="color:#a67c4e;font-size:1.05rem;"></i>
+            </button>
+            <a href="property-details.html?id=${p.id}" style="text-decoration:none;color:inherit;">
+              <div class="listing-img" style="${firstImg ? `--img:url('${firstImg}')` : ''}">
+                <span class="listing-badge">${p.purpose === 'sale' ? 'For Sale' : 'For Rent'}</span>
+              </div>
+              <div class="listing-body">
+                <h3>${p.title}</h3>
+                <p class="listing-loc"><i class="fas fa-location-dot"></i>${p.location}</p>
+                <div class="listing-meta">
+                  ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
+                  ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
+                  ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
+                </div>
+                <div class="listing-price">${p.price}</div>
+              </div>
+            </a>
+          </div>
+        `;
+        }).join('');
+
+        requestAnimationFrame(() => grid.classList.add('in-view'));
+      } catch (err) {
+        console.error('Failed to load listings:', err);
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#c0392b;">Failed to load properties. Please try again later.</p>';
+      }
+    }
+    async function deleteGlobalProperty(event, id, isAdmin) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!confirm('Are you sure you want to delete this property?')) return;
+      
+      const token = localStorage.getItem('token');
+      const url = isAdmin ? `/api/admin/properties/${id}` : `/api/properties/${id}`;
+      
+      try {
+        const res = await fetch(url, {
+          method: 'DELETE',
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (res.ok) {
+          document.getElementById('filterBtn').click();
+        } else {
+          const data = await res.json();
+          alert(data.error || 'Failed to delete property.');
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    async function toggleFavorite(event, id, btn) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const icon = btn.querySelector('i');
+      const isSaved = icon.classList.contains('fa-solid');
+
+      try {
+        if (isSaved) {
+          await fetch('/api/favorites/' + id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
+          icon.classList.remove('fa-solid');
+          icon.classList.add('fa-regular');
+        } else {
+          await fetch('/api/favorites/' + id, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+          icon.classList.remove('fa-regular');
+          icon.classList.add('fa-solid');
+        }
+      } catch (err) {
+        console.error('Failed to update favorite:', err);
+      }
+    }
+
+    async function markSavedProperties() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const res = await fetch('/api/favorites', { headers: { Authorization: 'Bearer ' + token } });
+        const data = await res.json();
+        const savedIds = new Set((data.favorites || []).map(p => p.id));
+        document.querySelectorAll('.save-btn').forEach(btn => {
+          const id = parseInt(btn.getAttribute('onclick').match(/\d+/)[0], 10);
+          if (savedIds.has(id)) {
+            const icon = btn.querySelector('i');
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid');
+          }
+        });
+      } catch (err) {
+        console.error('Failed to load saved properties:', err);
+      }
+    }
+
+    loadListings().then(markSavedProperties);
+
+    document.getElementById('filterBtn').addEventListener('click', () => {
+      const type = document.getElementById('filterType').value;
+      const purpose = document.getElementById('filterPurpose').value;
+      const location = document.getElementById('filterLocation').value.trim();
+      const beds = document.getElementById('filterBeds').value;
+      const minPrice = document.getElementById('filterMinPrice').value;
+      const maxPrice = document.getElementById('filterMaxPrice').value;
+
+      const params = new URLSearchParams();
+      if (type) params.append('type', type);
+      if (purpose) params.append('purpose', purpose);
+      if (location) params.append('location', location);
+      if (beds) params.append('beds', beds);
+      if (minPrice) params.append('minPrice', minPrice);
+      if (maxPrice) params.append('maxPrice', maxPrice);
+
+      loadListings(params).then(markSavedProperties);
+    });
+document.getElementById('saveSearchBtn').addEventListener('click', () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to save searches.');
+        window.location.href = 'login.html';
+        return;
+      }
+      const property_type = document.getElementById('filterType').value;
+      const purpose = document.getElementById('filterPurpose').value;
+      const location = document.getElementById('filterLocation').value.trim();
+
+      fetch('/api/saved-searches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ property_type, purpose, location })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('Search saved! We\'ll email you when a matching property is listed.'); window.location.href = 'user-dashboard.html';
+          } else {
+            alert(data.error || 'Could not save search.');
+          }
+        })
+        .catch(() => alert('Something went wrong. Please try again.'));
+    });
+  </script>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html">Listings</a>
+      <a href="agents.html">Agents</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Vishwa Developers. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>

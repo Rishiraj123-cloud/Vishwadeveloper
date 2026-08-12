@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VISHWA DEVELOPERS | Find Your Next Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Work Sans', sans-serif; background-color: #f8fafc; color: #0b1a2f; line-height: 1.5; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2.5rem; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
+    .logo { font-family: 'Fraunces', serif; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.5px; color: #0b1a2f; }
+    .logo span { color: #a67c4e; font-weight: 400; margin-left: 4px; font-size: 1rem; letter-spacing: 0.3px; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; font-weight: 500; }
+    .nav-links a { transition: color 0.2s; font-size: 1rem; }
+    .nav-links a:hover, .nav-links a.active { color: #a67c4e; }
+    .nav-toggle { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #0b1a2f; }
+
+    .full-banner { width: 100%; max-height: 380px; overflow: hidden; background: #e2e8f0; }
+    .full-banner img { width: 100%; height: 380px; object-fit: cover; object-position: center 30%; }
+
+    .hero { background: linear-gradient(135deg, #0b1a2f 0%, #1a2f44 100%); padding: 3.5rem 2rem 4rem; text-align: center; color: white; margin-top: -4px; }
+    .hero-content { max-width: 1000px; margin: 0 auto; }
+    .hero h1 { font-family: 'Fraunces', serif; font-size: 3rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1rem; }
+    .hero p { font-size: 1.2rem; opacity: 0.85; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+    .hero-search { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; background: rgba(255,255,255,0.08); backdrop-filter: blur(4px); padding: 1.5rem 2rem; border-radius: 60px; border: 1px solid rgba(255,255,255,0.15); max-width: 900px; margin: 0 auto; }
+    .hero-search select, .hero-search input, .hero-search button { padding: 0.75rem 1.2rem; border: none; border-radius: 40px; font-family: 'Work Sans', sans-serif; font-size: 0.95rem; background: white; color: #0b1a2f; outline: none; min-width: 140px; flex: 1 0 auto; }
+    .hero-search input::placeholder { color: #6b7a8d; }
+    .hero-search button { background: #a67c4e; color: white; font-weight: 600; cursor: pointer; flex: 0 1 120px; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 10px rgba(166, 124, 78, 0.3); }
+    .hero-search button:hover { background: #8e653f; transform: scale(1.02); }
+
+    .featured { padding: 4rem 2rem; max-width: 1300px; margin: 0 auto; }
+    .featured h2 { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 600; margin-bottom: 2.5rem; text-align: center; letter-spacing: -0.01em; }
+    .featured h2:after { content: ''; display: block; width: 70px; height: 4px; background: #a67c4e; margin: 0.5rem auto 0; border-radius: 4px; }
+
+    .property-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+    .property-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: transform 0.25s ease, box-shadow 0.3s; }
+    .property-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+    .property-card img { height: 220px; width: 100%; object-fit: cover; }
+    .property-info { padding: 1.5rem 1.5rem 1.8rem; }
+    .property-info h3 { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .location { color: #5b6f82; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+    .location i { color: #a67c4e; width: 1rem; }
+    .price { font-weight: 600; font-size: 1.3rem; color: #0b1a2f; margin: 0.5rem 0 1rem; }
+    .price i { font-size: 0.9rem; margin-right: 4px; color: #a67c4e; }
+
+    .btn { display: inline-block; background: #0b1a2f; color: white; padding: 0.6rem 1.8rem; border-radius: 40px; font-weight: 500; font-size: 0.95rem; transition: background 0.2s, transform 0.1s; border: none; cursor: pointer; }
+    .btn:hover { background: #a67c4e; transform: scale(1.02); }
+
+    .why-us { background: #f1f5f9; padding: 4rem 2rem; text-align: center; }
+    .why-us h2 { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 600; margin-bottom: 2.5rem; }
+    .why-us h2:after { content: ''; display: block; width: 70px; height: 4px; background: #a67c4e; margin: 0.5rem auto 0; border-radius: 4px; }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; max-width: 1100px; margin: 0 auto; }
+    .why-card { background: white; padding: 2.5rem 1.5rem; border-radius: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.02); transition: 0.2s; }
+    .why-card:hover { box-shadow: 0 16px 32px rgba(0,0,0,0.04); }
+    .why-card i { font-size: 2.8rem; color: #a67c4e; margin-bottom: 1rem; background: #f3ede8; padding: 0.7rem; border-radius: 60px; }
+    .why-card h3 { font-family: 'Fraunces', serif; font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .why-card p { color: #2d4055; font-size: 1rem; }
+
+    .footer { background: #0b1a2f; color: #b6c8db; text-align: center; padding: 2rem; font-size: 0.95rem; }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .footer-links a { color: #b6c8db; transition: color 0.2s; }
+    .footer-links a:hover { color: #a67c4e; }
+
+    @media (max-width: 800px) {
+      .navbar { padding: 0.8rem 1.5rem; }
+      .nav-links { gap: 1.2rem; flex-wrap: wrap; }
+      .hero h1 { font-size: 2.2rem; }
+      .hero-search { border-radius: 40px; padding: 1.2rem 1.5rem; flex-direction: column; align-items: stretch; }
+      .hero-search select, .hero-search input, .hero-search button { min-width: 100%; flex: 1 1 auto; }
+      .full-banner img { height: 200px; }
+      .property-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 550px) {
+      .nav-links { display: none; width: 100%; flex-direction: column; align-items: center; gap: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #eef2f6; }
+      .nav-links.active { display: flex; }
+      .nav-toggle { display: block; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero { padding: 2rem 1rem; }
+      .property-grid { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .full-banner img { height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">VISHWA<span>DEVELOPERS</span></div>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="listings.html"><i class="fas fa-building"></i> Listings</a></li>
+        <li><a href="agents.html"><i class="fas fa-user-tie"></i> Agents</a></li>
+        <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </header>
+
+  <section class="full-banner">
+    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000&auto=format&fit=crop" alt="Featured Home" />
+  </section>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find a Place You'll Love to Call Home</h1>
+      <p><i class="fas fa-check-circle" style="color: #a67c4e; margin-right: 6px;"></i> Browse verified listings, connect with trusted agents, and move in with confidence.</p>
+      <form class="hero-search" action="listings.html" method="get">
+        <select name="type">
+          <option value="">Buy or Rent</option>
+          <option value="buy">Buy</option>
+          <option value="rent">Rent</option>
+        </select>
+        <input type="text" name="location" placeholder="Enter city or neighborhood" />
+        <select name="price">
+          <option value="">Price Range</option>
+          <option value="0-12">Under ₹12L</option>
+          <option value="12-15">₹12L - ₹15L</option>
+          <option value="15-18">₹15L - ₹18L</option>
+          <option value="18-22">₹18L - ₹22L</option>
+          <option value="22-25">₹22L - ₹25L</option>
+          <option value="25+">₹25L+</option>
+        </select>
+        <button type="submit"><i class="fas fa-search"></i> Search</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="featured">
+    <h2>Featured Properties</h2>
+    <div class="property-grid">
+
+      <div class="property-card">
+        <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=1200&auto=format&fit=crop" alt="Modern Villa" />
+        <div class="property-info">
+          <h3>1200 Sq.feet Land</h3>
+          <p class="location"><i class="fas fa-map-pin"></i> Whitefield, Bangalore</p>
+          <p class="price"><i class="fas fa-tag"></i> ₹12 lakh</p>
+          <a href="property-details.html" class="btn">View Details</a>
+        </div>
+      </div>
+
+      <div class="property-card">
+        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1200&auto=format&fit=crop" alt="City Apartment" />
+        <div class="property-info">
+          <h3>1500 Sq.feet Land</h3>
+          <p class="location"><i class="fas fa-map-pin"></i> Indiranagar, Bangalore</p>
+          <p class="price"><i class="fas fa-tag"></i> ₹16 lakh</p>
+          <a href="property-details.html" class="btn">View Details</a>
+        </div>
+      </div>
+
+      <div class="property-card">
+        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop" alt="Cozy Studio" />
+        <div class="property-info">
+          <h3>1600 Sq.feet Land</h3>
+          <p class="location"><i class="fas fa-map-pin"></i> HSR Layout, Bangalore</p>
+          <p class="price"><i class="fas fa-tag"></i> ₹20 lakh</p>
+          <a href="property-details.html" class="btn">View Details</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="why-us">
+    <h2>Why Choose Vishwa Developers</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <i class="fas fa-check-circle"></i>
+        <h3>Verified Listings</h3>
+        <p>Every property is checked and confirmed before it goes live.</p>
+      </div>
+      <div class="why-card">
+        <i class="fas fa-user-tie"></i>
+        <h3>Trusted Agents</h3>
+        <p>Work with experienced local agents who know the market.</p>
+      </div>
+      <div class="why-card">
+        <i class="fas fa-rocket"></i>
+        <h3>Simple Process</h3>
+        <p>From search to move-in, we keep things clear and hassle-free.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="listings.html">Listings</a>
+      <a href="agents.html">Agents</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Vishwa Developers. All rights reserved.</p>
+  </footer>
+
+  
+  <script>
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+  </script>
+</body>
+</html>
