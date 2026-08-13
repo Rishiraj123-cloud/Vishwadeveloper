@@ -120,31 +120,27 @@ router.post('/', requireAuth, requireOwner, upload.array('images', 5), async (re
   const imagePaths = [];
   
   if (req.files && req.files.length > 0) {
-    const uploadsDir = path.join(__dirname, '..', 'uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir);
-    }
-    
     for (const file of req.files) {
-      const ext = path.extname(file.originalname) || '.jpg';
-      const baseFilename = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      let filename = baseFilename + '.webp';
-      let filepath = path.join(uploadsDir, filename);
+      const imgId = 'img_' + Date.now() + '_' + Math.round(Math.random() * 1e9);
+      let base64Data = '';
       
       try {
         // Process with sharp
-        await sharp(file.buffer)
+        const buffer = await sharp(file.buffer)
           .resize({ width: 1280, height: 800, fit: 'inside', withoutEnlargement: true })
           .webp({ quality: 80 })
-          .toFile(filepath);
+          .toBuffer();
+        base64Data = 'data:image/webp;base64,' + buffer.toString('base64');
       } catch (err) {
         console.error('Sharp processing failed, falling back to original file:', err);
-        filename = baseFilename + ext;
-        filepath = path.join(uploadsDir, filename);
-        fs.writeFileSync(filepath, file.buffer);
+        const ext = file.mimetype;
+        base64Data = 'data:' + ext + ';base64,' + file.buffer.toString('base64');
       }
         
-      imagePaths.push('/uploads/' + filename);
+      db.prepare('INSERT INTO property_images (id, image_data) VALUES (?, ?)')
+        .run(imgId, base64Data);
+        
+      imagePaths.push(imgId);
     }
   }
 
@@ -173,6 +169,15 @@ router.delete('/:id', requireAuth, requireOwner, (req, res) => {
   if (property.owner_id !== req.user.id) {
     return res.status(403).json({ error: 'You can only delete your own listings.' });
   }
+  
+  let images = [];
+  try { images = JSON.parse(property.images || '[]'); } catch(e) {}
+  const imgIds = images.filter(img => img.startsWith('img_'));
+  if (imgIds.length > 0) {
+    const placeholders = imgIds.map(() => '?').join(',');
+    db.prepare(`DELETE FROM property_images WHERE id IN (${placeholders})`).run(...imgIds);
+  }
+
   db.prepare('DELETE FROM properties WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
@@ -180,7 +185,11 @@ router.delete('/:id', requireAuth, requireOwner, (req, res) => {
 // Helper: turn the stored JSON string back into a real array for the frontend
 function parseImages(property) {
   try {
-    property.images = property.images ? JSON.parse(property.images) : [];
+    const parsed = property.images ? JSON.parse(property.images) : [];
+    property.images = parsed.map(img => {
+      if (img.startsWith('img_')) return '/api/image/' + img;
+      return img;
+    });
   } catch (e) {
     property.images = [];
   }

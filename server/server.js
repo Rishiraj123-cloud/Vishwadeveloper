@@ -45,6 +45,28 @@ app.use('/api/leads', leadsRoutes);
 app.use('/api/visits', visitsRoutes);
 app.use('/api/transactions', transactionsRoutes);
 
+// Serve Images from Database
+app.get('/api/image/:id', (req, res) => {
+  const db = require('./db');
+  const image = db.prepare('SELECT image_data FROM property_images WHERE id = ?').get(req.params.id);
+  
+  if (!image || !image.image_data) {
+    return res.status(404).send('Image not found');
+  }
+
+  // image_data is stored as: data:image/webp;base64,.....
+  const match = image.image_data.match(/^data:(image\/\w+);base64,(.+)$/);
+  if (match) {
+    const contentType = match[1];
+    const buffer = Buffer.from(match[2], 'base64');
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    res.send(buffer);
+  } else {
+    res.status(404).send('Invalid image data');
+  }
+});
+
 // SSR for Property Details (SEO Meta Tags)
 const fs = require('fs');
 app.get('/property/:id', (req, res) => {

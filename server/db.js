@@ -36,6 +36,11 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(owner_id) REFERENCES users(id)
   );
+  CREATE TABLE IF NOT EXISTS property_images (
+    id TEXT PRIMARY KEY,
+    image_data TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
   CREATE TABLE IF NOT EXISTS contact_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
