@@ -45,24 +45,6 @@
     </div>
 
     <div class="filter-bar reveal" style="display:flex; flex-wrap:wrap; gap:10px;">
-      <select id="filterType">
-        <option value="">Property Type</option>
-        <option value="Villa">Villa</option>
-        <option value="Apartment">Apartment</option>
-        <option value="Plot">Plot</option>
-      </select>
-      <select id="filterPurpose">
-        <option value="">Purpose</option>
-        <option value="sale">Buy</option>
-        <option value="rent">Rent</option>
-      </select>
-      <select id="filterBeds">
-        <option value="">Any Beds</option>
-        <option value="1">1+ Beds</option>
-        <option value="2">2+ Beds</option>
-        <option value="3">3+ Beds</option>
-        <option value="4">4+ Beds</option>
-      </select>
       <input type="number" id="filterMinPrice" placeholder="Min Price (₹)" style="max-width:140px;" />
       <input type="number" id="filterMaxPrice" placeholder="Max Price (₹)" style="max-width:140px;" />
       <input type="text" id="filterLocation" placeholder="Location" />
@@ -188,13 +170,8 @@
                 <h3>${p.title}</h3>
                 <p class="listing-loc"><i class="fas fa-location-dot"></i>${p.location}</p>
                 <div class="listing-meta">
-                  ${p.property_type === 'Plot' || p.property_type === 'Residential Site' ? `
-                    ${p.plot_size ? `<span><i class="fas fa-vector-square"></i> ${p.plot_size}</span>` : ''}
-                    ${p.facing ? `<span><i class="fas fa-compass"></i> ${p.facing} Facing</span>` : ''}
-                  ` : `
-                    ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
-                    ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
-                  `}
+                  ${p.plot_size ? `<span><i class="fas fa-vector-square"></i> ${p.plot_size}</span>` : ''}
+                  ${p.facing ? `<span><i class="fas fa-compass"></i> ${p.facing} Facing</span>` : ''}
                   ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
                 </div>
                 <div class="listing-price">${p.price}</div>
@@ -285,18 +262,12 @@
     loadListings().then(markSavedProperties);
 
     document.getElementById('filterBtn').addEventListener('click', () => {
-      const type = document.getElementById('filterType').value;
-      const purpose = document.getElementById('filterPurpose').value;
       const location = document.getElementById('filterLocation').value.trim();
-      const beds = document.getElementById('filterBeds').value;
       const minPrice = document.getElementById('filterMinPrice').value;
       const maxPrice = document.getElementById('filterMaxPrice').value;
 
       const params = new URLSearchParams();
-      if (type) params.append('type', type);
-      if (purpose) params.append('purpose', purpose);
       if (location) params.append('location', location);
-      if (beds) params.append('beds', beds);
       if (minPrice) params.append('minPrice', minPrice);
       if (maxPrice) params.append('maxPrice', maxPrice);
 
@@ -309,8 +280,6 @@ document.getElementById('saveSearchBtn').addEventListener('click', () => {
         window.location.href = 'login.html';
         return;
       }
-      const property_type = document.getElementById('filterType').value;
-      const purpose = document.getElementById('filterPurpose').value;
       const location = document.getElementById('filterLocation').value.trim();
 
       fetch('/api/saved-searches', {
@@ -319,7 +288,7 @@ document.getElementById('saveSearchBtn').addEventListener('click', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ property_type, purpose, location })
+        body: JSON.stringify({ property_type: 'Residential Site', purpose: 'sale', location })
       })
         .then(res => res.json())
         .then(data => {

@@ -120,19 +120,9 @@
             <input type="hidden" id="lat" /><input type="hidden" id="lng" />
 
             <div class="form-grid">
-              <div>
-                <label>Property Type</label>
-                <select id="propertyType"><option>Villa</option><option>Apartment</option><option>Plot</option></select>
-              </div>
-              <div>
-                <label>Purpose</label>
-                <select id="purpose"><option value="sale">Sale</option><option value="rent">Rent</option></select>
-              </div>
               <div><label>Price</label><input type="text" id="price" required /></div>
               <div><label>Area (sqft)</label><input type="number" id="sqft" /></div>
-              <div><label>Beds</label><input type="number" id="beds" /></div>
-              <div><label>Baths</label><input type="number" id="baths" /></div>
-              <div><label>Plot Size (e.g. 30x40)</label><input type="text" id="plotSize" placeholder="e.g. 30x40 ft" /></div>
+              <div><label>Plot Size (e.g. 30x40 ft)</label><input type="text" id="plotSize" placeholder="e.g. 30x40" /></div>
               <div>
                 <label>Facing</label>
                 <select id="facing">
@@ -408,9 +398,12 @@
     document.getElementById('propertyForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const formData = new FormData();
-      ['title','location','propertyType','purpose','price','beds','baths','sqft','plotSize','facing','description','lat','lng'].forEach(id => {
-        if(document.getElementById(id).value) formData.append(id, document.getElementById(id).value);
+      ['title','location','price','sqft','plotSize','facing','description','lat','lng'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el && el.value) formData.append(id, el.value);
       });
+      formData.append('propertyType', 'Residential Site');
+      formData.append('purpose', 'sale');
       Array.from(document.getElementById('images').files).slice(0,5).forEach(f => formData.append('images', f));
 
       const res = await fetch('/api/properties', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: formData });
