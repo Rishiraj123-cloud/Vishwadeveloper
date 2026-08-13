@@ -170,14 +170,14 @@ if (!adminExists) {
 }
 
 // Create default owner if not exists
-const ownerEmail = 'owner@vishwadevelopers.com';
+const ownerEmail = 'vishwadeveleopers29@gmail.com';
 const ownerExists = db.prepare('SELECT id FROM users WHERE email = ?').get(ownerEmail);
 if (!ownerExists) {
   const bcrypt = require('bcryptjs');
-  const hash = bcrypt.hashSync('owner', 10);
-  db.prepare(`INSERT INTO users (full_name, email, phone, password_hash, role, is_admin) VALUES (?, ?, ?, ?, 'owner', 0)`)
-    .run('Test Owner', ownerEmail, '0000000000', hash);
-  console.log("Created default owner account.");
+  const hash = bcrypt.hashSync('vishwa@2026', 10);
+  db.prepare(`INSERT INTO users (full_name, email, phone, password_hash, role, is_admin) VALUES (?, ?, ?, ?, 'owner', 1)`)
+    .run('Vishwa Developers', ownerEmail, '+91', hash);
+  console.log("Created master owner account for client.");
 }
 
 // Create default regular user if not exists
