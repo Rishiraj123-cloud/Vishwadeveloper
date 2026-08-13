@@ -64,15 +64,15 @@ router.post('/owner-signup', (req, res) => {
   res.status(201).json({ token: makeToken(user), user: publicUser(user) });
 });
 
-// LOGIN (shared by user + owner, role tells us which table row to match)
+// LOGIN (shared by user + owner, role is automatically determined)
 router.post('/login', (req, res) => {
-  const { emailOrPhone, password, role } = req.body;
-  if (!emailOrPhone || !password || !role) {
+  const { emailOrPhone, password } = req.body;
+  if (!emailOrPhone || !password) {
     return res.status(400).json({ error: 'Missing login details.' });
   }
   const user = db.prepare(
-    'SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = ?'
-  ).get(emailOrPhone, emailOrPhone, role);
+    'SELECT * FROM users WHERE email = ? OR phone = ?'
+  ).get(emailOrPhone, emailOrPhone);
 
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
     return res.status(401).json({ error: 'Invalid credentials.' });

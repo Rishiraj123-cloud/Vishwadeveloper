@@ -89,10 +89,7 @@
         <p id="loginSubtitle">Log in to browse and save your favorite properties.</p>
       </div>
 
-      <div class="role-toggle">
-        <button type="button" class="active" id="userTab" onclick="setRole('user')"><i class="fas fa-user"></i> I'm a User</button>
-        <button type="button" id="ownerTab" onclick="setRole('owner')"><i class="fas fa-user-tie"></i> I'm an Owner</button>
-      </div>
+
 
       <form class="login-form" id="loginForm">
         <label for="email">Email or Phone</label>
@@ -109,7 +106,7 @@
           <a href="#">Forgot password?</a>
         </div>
 
-        <button type="submit" class="btn" id="submitBtn"><i class="fas fa-arrow-right-to-bracket"></i> Log In as User</button>
+        <button type="submit" class="btn" id="submitBtn"><i class="fas fa-arrow-right-to-bracket"></i> Log In</button>
       </form>
 
       <div class="divider">or continue with</div>
@@ -138,30 +135,10 @@
       document.getElementById('navLinks').classList.toggle('active');
     });
 
-    const userTab = document.getElementById('userTab');
-    const ownerTab = document.getElementById('ownerTab');
     const loginTitle = document.getElementById('loginTitle');
     const loginSubtitle = document.getElementById('loginSubtitle');
     const submitBtn = document.getElementById('submitBtn');
     const switchLine = document.getElementById('switchLine');
-
-    function setRole(role) {
-      if (role === 'user') {
-        userTab.classList.add('active');
-        ownerTab.classList.remove('active');
-        loginTitle.textContent = 'Welcome Back';
-        loginSubtitle.textContent = 'Log in to browse and save your favorite properties.';
-        submitBtn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Log In as User';
-        switchLine.innerHTML = 'New here? <a href="signup.html">Create an account</a>';
-      } else {
-        ownerTab.classList.add('active');
-        userTab.classList.remove('active');
-        loginTitle.textContent = 'Owner Login';
-        loginSubtitle.textContent = 'Access your dashboard to manage listings and inquiries.';
-        submitBtn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Log In as Owner';
-        switchLine.innerHTML = 'Want to list your property? <a href="owner-signup.html">Register as an owner</a>';
-      }
-    }
 
     const togglePassword = document.getElementById('togglePassword');
     const password = document.getElementById('password');
@@ -174,14 +151,13 @@
 
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-      const role = ownerTab.classList.contains('active') ? 'owner' : 'user';
       const emailOrPhone = document.getElementById('email').value;
       const pwVal = document.getElementById('password').value;
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ emailOrPhone, password: pwVal, role })
+          body: JSON.stringify({ emailOrPhone, password: pwVal })
         });
         const data = await res.json();
         if (!res.ok) { alert(data.error || 'Login failed.'); return; }
