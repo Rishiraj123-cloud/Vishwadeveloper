@@ -188,8 +188,13 @@
                 <h3>${p.title}</h3>
                 <p class="listing-loc"><i class="fas fa-location-dot"></i>${p.location}</p>
                 <div class="listing-meta">
-                  ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
-                  ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
+                  ${p.property_type === 'Plot' || p.property_type === 'Residential Site' ? `
+                    ${p.plot_size ? `<span><i class="fas fa-vector-square"></i> ${p.plot_size}</span>` : ''}
+                    ${p.facing ? `<span><i class="fas fa-compass"></i> ${p.facing} Facing</span>` : ''}
+                  ` : `
+                    ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
+                    ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
+                  `}
                   ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
                 </div>
                 <div class="listing-price">${p.price}</div>

@@ -27,6 +27,8 @@ db.exec(`
     beds INTEGER,
     baths INTEGER,
     sqft INTEGER,
+    plot_size TEXT,
+    facing TEXT,
     description TEXT,
     images TEXT,
     lat REAL,
@@ -140,6 +142,14 @@ try {
 try {
   db.exec("ALTER TABLE properties ADD COLUMN lng REAL;");
   console.log("Migration: added lng column to properties");
+} catch (e) {}
+try {
+  db.exec("ALTER TABLE properties ADD COLUMN plot_size TEXT;");
+  console.log("Migration: added plot_size column to properties");
+} catch (e) {}
+try {
+  db.exec("ALTER TABLE properties ADD COLUMN facing TEXT;");
+  console.log("Migration: added facing column to properties");
 } catch (e) {}
 
 // Migration: add password reset columns to users

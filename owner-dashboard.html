@@ -132,6 +132,21 @@
               <div><label>Area (sqft)</label><input type="number" id="sqft" /></div>
               <div><label>Beds</label><input type="number" id="beds" /></div>
               <div><label>Baths</label><input type="number" id="baths" /></div>
+              <div><label>Plot Size (e.g. 30x40)</label><input type="text" id="plotSize" placeholder="e.g. 30x40 ft" /></div>
+              <div>
+                <label>Facing</label>
+                <select id="facing">
+                  <option value="">Select...</option>
+                  <option value="East">East</option>
+                  <option value="West">West</option>
+                  <option value="North">North</option>
+                  <option value="South">South</option>
+                  <option value="North-East">North-East</option>
+                  <option value="North-West">North-West</option>
+                  <option value="South-East">South-East</option>
+                  <option value="South-West">South-West</option>
+                </select>
+              </div>
             </div>
             <label>Description</label>
             <textarea id="description"></textarea>
@@ -393,7 +408,7 @@
     document.getElementById('propertyForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const formData = new FormData();
-      ['title','location','propertyType','purpose','price','beds','baths','sqft','description','lat','lng'].forEach(id => {
+      ['title','location','propertyType','purpose','price','beds','baths','sqft','plotSize','facing','description','lat','lng'].forEach(id => {
         if(document.getElementById(id).value) formData.append(id, document.getElementById(id).value);
       });
       Array.from(document.getElementById('images').files).slice(0,5).forEach(f => formData.append('images', f));

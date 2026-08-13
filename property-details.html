@@ -116,9 +116,15 @@
           </div>
 
           <div class="detail-meta">
-            ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
-            ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
-            ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
+            ${p.property_type === 'Plot' || p.property_type === 'Residential Site' ? `
+              ${p.plot_size ? `<span><i class="fas fa-vector-square"></i> ${p.plot_size}</span>` : ''}
+              ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
+              ${p.facing ? `<span><i class="fas fa-compass"></i> ${p.facing} Facing</span>` : ''}
+            ` : `
+              ${p.beds ? `<span><i class="fas fa-bed"></i> ${p.beds} Beds</span>` : ''}
+              ${p.baths ? `<span><i class="fas fa-bath"></i> ${p.baths} Baths</span>` : ''}
+              ${p.sqft ? `<span><i class="fas fa-ruler-combined"></i> ${p.sqft} sqft</span>` : ''}
+            `}
             ${p.property_type ? `<span><i class="fas fa-building"></i> ${p.property_type}</span>` : ''}
           </div>
 

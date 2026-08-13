@@ -112,7 +112,7 @@ router.get('/:id', (req, res) => {
 
 // CREATE (owner only) — now accepts up to 5 images via multipart/form-data
 router.post('/', requireAuth, requireOwner, upload.array('images', 5), async (req, res) => {
-  const { title, location, propertyType, purpose, price, beds, baths, sqft, description } = req.body;
+  const { title, location, propertyType, purpose, price, beds, baths, sqft, plotSize, facing, description } = req.body;
   if (!title || !location || !purpose || !price) {
     return res.status(400).json({ error: 'Title, location, purpose, and price are required.' });
   }
@@ -158,9 +158,9 @@ router.post('/', requireAuth, requireOwner, upload.array('images', 5), async (re
   }
 
   const info = db.prepare(
-    `INSERT INTO properties (owner_id, title, location, property_type, purpose, price, beds, baths, sqft, description, images, lat, lng)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(req.user.id, title, location, propertyType || null, purpose, price, beds || null, baths || null, sqft || null, description || null, imagesJson, coords ? coords.lat : null, coords ? coords.lng : null);
+    `INSERT INTO properties (owner_id, title, location, property_type, purpose, price, beds, baths, sqft, plot_size, facing, description, images, lat, lng)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(req.user.id, title, location, propertyType || null, purpose, price, beds || null, baths || null, sqft || null, plotSize || null, facing || null, description || null, imagesJson, coords ? coords.lat : null, coords ? coords.lng : null);
 
   const property = db.prepare('SELECT * FROM properties WHERE id = ?').get(info.lastInsertRowid);
   res.status(201).json({ property: parseImages(property) });
