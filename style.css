@@ -510,3 +510,9 @@ ul { list-style: none; }
 @media (prefers-reduced-motion: reduce) {
   .hero-sky, .cloud, .particle, .layer-front svg rect { animation: none; }
 }
+
+.nav-logo {
+  max-height: 45px;
+  width: auto;
+  display: block;
+}
